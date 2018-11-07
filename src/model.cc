@@ -90,6 +90,11 @@ real Model::hierarchicalSoftmax(int32_t target, real lr) {
   return loss;
 }
 
+bool Model::dropOut(double dropOut_) const {
+    srand((unsigned)time(NULL));
+    return (rand() / double(RAND_MAX)) < dropOut_;
+}
+
 void Model::computeOutputSoftmax(Vector& hidden, Vector& output) const {
   if (quant_ && args_->qout) {
     output.mul(*qwo_, hidden);
@@ -97,15 +102,23 @@ void Model::computeOutputSoftmax(Vector& hidden, Vector& output) const {
     output.mul(*wo_, hidden);
   }
   real max = output[0], z = 0.0;
+  bool *drops = new bool[osz_];
   for (int32_t i = 0; i < osz_; i++) {
-    max = std::max(output[i], max);
+    drops[i] = dropOut(args_->dropOut);
+    if(drops[i]){
+      max = std::max(output[i], max);
+    }
   }
   for (int32_t i = 0; i < osz_; i++) {
-    output[i] = exp(output[i] - max);
-    z += output[i];
+    if(drops[i]){
+      output[i] = exp(output[i] - max);
+      z += output[i];
+    }
   }
   for (int32_t i = 0; i < osz_; i++) {
-    output[i] /= z;
+    if(drops[i]){
+      output[i] /= z;
+    }
   }
 }
 

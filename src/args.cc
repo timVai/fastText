@@ -38,6 +38,8 @@ Args::Args() {
   pretrainedVectors = "";
   saveOutput = false;
 
+  dropOut = 1.0;
+
   qout = false;
   retrain = false;
   qnorm = false;
@@ -106,6 +108,8 @@ void Args::parseArgs(const std::vector<std::string>& args) {
         output = std::string(args.at(ai + 1));
       } else if (args[ai] == "-lr") {
         lr = std::stof(args.at(ai + 1));
+      } else if (args[ai] == "-dropOut") {
+        dropOut = std::stof(args.at(ai + 1));
       } else if (args[ai] == "-lrUpdateRate") {
         lrUpdateRate = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-dim") {

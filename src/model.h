@@ -62,6 +62,8 @@ class Model {
   void initSigmoid();
   void initLog();
 
+  bool dropOut(double dropOut_) const;
+
   static const int32_t NEGATIVE_TABLE_SIZE = 10000000;
 
  public:
